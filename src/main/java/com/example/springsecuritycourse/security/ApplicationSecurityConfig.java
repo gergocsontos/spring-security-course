@@ -45,13 +45,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/login")
                     .permitAll()
                     .defaultSuccessUrl("/courses", true)
-                    .passwordParameter("kiskutya")
-                    .usernameParameter("cica")
                 .and()
                 .rememberMe()
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
                     .key("somethingverysecured")
-                    .rememberMeParameter("poke-me")
                 .and()
                 .logout()
                     .logoutUrl("/logout")
@@ -69,20 +66,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .username("annasmith")
                 .password(passwordEncoder.encode("password"))
                 .authorities(STUDENT.getGrantedAuthorities())
-                //.roles(STUDENT.name()) // ROLE_STUDENT
                 .build();
 
         UserDetails lindaUser = User.builder()
                 .username("linda")
                 .password(passwordEncoder.encode("password123"))
-                //.roles(ADMIN.name()) // ROLE_ADMIN
                 .authorities(ADMIN.getGrantedAuthorities())
                 .build();
 
         UserDetails tomUser = User.builder()
                 .username("tom")
                 .password(passwordEncoder.encode("password123"))
-                //.roles(ADMIN_TRAINEE.name()) // ROLE_ADMIN_TRAINEE
                 .authorities(ADMIN_TRAINEE.getGrantedAuthorities())
                 .build();
 
