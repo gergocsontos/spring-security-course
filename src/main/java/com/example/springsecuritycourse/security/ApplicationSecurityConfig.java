@@ -1,6 +1,7 @@
 package com.example.springsecuritycourse.security;
 
 import com.example.springsecuritycourse.auth.ApplicationUserService;
+import com.example.springsecuritycourse.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.util.concurrent.TimeUnit;
 
 import static com.example.springsecuritycourse.security.ApplicationUserRole.*;
 
@@ -36,28 +35,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
                 .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
-                    .defaultSuccessUrl("/courses", true)
-                .and()
-                .rememberMe()
-                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-                    .key("somethingverysecured")
-                .and()
-                .logout()
-                    .logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // must be POST with CSRF enabled
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID", "remember-me")
-                    .logoutSuccessUrl("/login");
+                .authenticated();
     }
 
     @Override
