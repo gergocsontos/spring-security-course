@@ -42,20 +42,24 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/courses", true)
+                    .loginPage("/login")
+                    .permitAll()
+                    .defaultSuccessUrl("/courses", true)
+                    .passwordParameter("kiskutya")
+                    .usernameParameter("cica")
                 .and()
                 .rememberMe()
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
                     .key("somethingverysecured")
+                    .rememberMeParameter("poke-me")
                 .and()
                 .logout()
-                .logoutUrl("/logout")
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // must be POST with CSRF enabled
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "remember-me")
-                .logoutSuccessUrl("/login");
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // must be POST with CSRF enabled
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID", "remember-me")
+                    .logoutSuccessUrl("/login");
     }
 
     @Bean
